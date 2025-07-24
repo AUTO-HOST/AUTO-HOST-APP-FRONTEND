@@ -1,0 +1,23 @@
+    /* src/index.css */
+
+    /* Estas son las directivas de Tailwind CSS. Son ESENCIALES. */
+    /* @tailwind base; incluye estilos base para elementos HTML. */
+    /* @tailwind components; incluye clases para componentes predefinidos de Tailwind. */
+    /* @tailwind utilities; incluye todas las clases de utilidad de Tailwind (ej. flex, text-blue-500). */
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+
+    /* Aquí puedes añadir tus estilos CSS personalizados globales. */
+    /* Por ejemplo, para definir una fuente global para el cuerpo de la página. */
+    body {
+      font-family: 'Inter', sans-serif; /* Asegúrate de que esta fuente esté disponible o cámbiala por una que uses. */
+      margin: 0; /* Un buen reinicio para el margen del cuerpo. */
+      padding: 0; /* Un buen reinicio para el padding del cuerpo. */
+      box-sizing: border-box; /* Asegura que el padding y el borde se incluyan en el ancho/alto del elemento. */
+    }
+
+    /* Puedes añadir más estilos globales o específicos aquí si los tenías antes. */
+    /* Por ejemplo: */
+    /* html, body, #root { height: 100%; } */
+    
