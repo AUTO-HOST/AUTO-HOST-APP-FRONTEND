@@ -67,3 +67,8 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# Credenciales sensibles
+backend/serviceAccountKey.json.json
+*.env
+.env.local

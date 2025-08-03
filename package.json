@@ -2,19 +2,22 @@
   "name": "auto-host-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://auto-host.github.io/AUTO-HOST-APP-FRONTEND",
   "dependencies": {
     "axios": "^1.10.0",
     "firebase": "^9.23.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.0.0",  
+    "react-router-dom": "^6.0.0",
     "react-scripts": "5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "npx gh-pages -d build --branch deploy-pages"
   },
   "eslintConfig": {
     "extends": [

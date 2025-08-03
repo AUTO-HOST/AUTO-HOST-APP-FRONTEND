@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
+// Importa la URL base de tu API desde el archivo de configuración centralizado
+// Asegúrate de que este archivo 'config.js' exista en tu carpeta 'src/'
+import API_BASE_URL from '../config';
 
 const SellerDashboardPage = ({ onSellerDashboard }) => {
   const navigate = useNavigate();
@@ -35,7 +38,9 @@ const SellerDashboardPage = ({ onSellerDashboard }) => {
     console.log(`Intentando cargar productos para el vendedor: ${currentUser.uid}`);
 
     try {
-      const response = await axios.get(`http://localhost:5000/api/products?sellerId=${currentUser.uid}`);
+      // --- CAMBIO IMPORTANTE AQUÍ: Usando API_BASE_URL para GET de productos del vendedor ---
+      const response = await axios.get(`${API_BASE_URL}/products?sellerId=${currentUser.uid}`);
+      // --- FIN DEL CAMBIO IMPORTANTE ---
       console.log("Productos del vendedor obtenidos:", response.data);
       setSellerProducts(Array.isArray(response.data.products) ? response.data.products : []);
       setLoadingProducts(false);
@@ -66,10 +71,10 @@ const SellerDashboardPage = ({ onSellerDashboard }) => {
     console.log("DEBUG-FRONTEND: ¡handleConfirmDelete iniciado!");
     if (!productToDelete) {
         console.log("DEBUG-FRONTEND: productToDelete es null, cancelando confirmación real.");
-        return; 
+        return;
     }
 
-    setLoadingProducts(true); 
+    setLoadingProducts(true);
     setError(null);
 
     try {
@@ -82,18 +87,20 @@ const SellerDashboardPage = ({ onSellerDashboard }) => {
       }
       const idToken = await currentUser.getIdToken();
       console.log("DEBUG-FRONTEND: ID Token obtenido. Iniciando petición axios.delete.");
-      console.log("DEBUG-FRONTEND: URL de DELETE:", `http://localhost:5000/api/products/${productToDelete}`);
 
-      const response = await axios.delete(`http://localhost:5000/api/products/${productToDelete}`, {
+      // --- CAMBIO IMPORTANTE AQUÍ: Usando API_BASE_URL para DELETE de producto ---
+      console.log("DEBUG-FRONTEND: URL de DELETE:", `${API_BASE_URL}/products/${productToDelete}`);
+      const response = await axios.delete(`${API_BASE_URL}/products/${productToDelete}`, {
         headers: {
           'Authorization': `Bearer ${idToken}`,
         },
       });
+      // --- FIN DEL CAMBIO IMPORTANTE ---
 
       console.log("DEBUG-FRONTEND: Petición DELETE enviada con éxito. Respuesta recibida:", response.data);
       setSellerProducts(prevProducts => prevProducts.filter(product => product._id !== productToDelete));
       setLoadingProducts(false);
-      alert("¡Producto eliminado exitosamente!"); 
+      alert("¡Producto eliminado exitosamente!");
       console.log("DEBUG-FRONTEND: Producto eliminado de la UI y mensaje de éxito.");
 
     } catch (err) {
@@ -139,8 +146,8 @@ const SellerDashboardPage = ({ onSellerDashboard }) => {
     <div className="container mx-auto p-8">
       {/* Botón superior de Añadir Refacción */}
       <div className="flex justify-end mb-6">
-        <button 
-          onClick={() => navigate('/seller/add-product')} 
+        <button
+          onClick={() => navigate('/seller/add-product')}
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full flex items-center shadow-lg transition-colors"
         >
           <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd"></path></svg>
@@ -153,17 +160,17 @@ const SellerDashboardPage = ({ onSellerDashboard }) => {
 
       {/* --- Navegación Interna del Vendedor (NUEVO) --- */}
       <div class="flex justify-center space-x-4 mb-8">
-        <button 
+        <button
           onClick={() => navigate('/seller-dashboard')}
-          className="px-6 py-2 rounded-full font-semibold text-lg transition-colors 
-                     bg-blue-600 text-white shadow-md hover:bg-blue-700"
+          className="px-6 py-2 rounded-full font-semibold text-lg transition-colors
+                      bg-blue-600 text-white shadow-md hover:bg-blue-700"
         >
           Mi Dashboard
         </button>
-        <button 
+        <button
           onClick={() => navigate('/seller/orders')}
-          className="px-6 py-2 rounded-full font-semibold text-lg transition-colors 
-                     bg-gray-200 text-gray-800 hover:bg-gray-300"
+          className="px-6 py-2 rounded-full font-semibold text-lg transition-colors
+                      bg-gray-200 text-gray-800 hover:bg-gray-300"
         >
           Mis Ventas
         </button>
@@ -249,10 +256,10 @@ const SellerDashboardPage = ({ onSellerDashboard }) => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
-                          <img 
-                            className="h-10 w-10 rounded-full object-cover" 
-                            src={product.imageUrl || `https://placehold.it/40x40?text=${product.name.substring(0, Math.min(product.name.length, 3))}`} 
-                            alt={product.name} 
+                          <img
+                            className="h-10 w-10 rounded-full object-cover"
+                            src={product.imageUrl || `https://placehold.it/40x40?text=${product.name.substring(0, Math.min(product.name.length, 3))}`}
+                            alt={product.name}
                           />
                         </div>
                         <div className="ml-4">

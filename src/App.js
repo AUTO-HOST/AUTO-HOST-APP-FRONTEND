@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom'; // CAMBIADO a HashRouter
 
 // Importa tus componentes desde sus respectivos archivos
 import Header from './components/Header';
@@ -20,7 +20,7 @@ import MessagesPage from './pages/MessagesPage';
 import EditProductPage from './pages/EditProductPage';
 import CartPage from './pages/CartPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
-import SellerOrdersPage from './pages/SellerOrdersPage'; // <-- ¡Añade esta importación!
+import SellerOrdersPage from './pages/SellerOrdersPage'; 
 
 // Importa el AuthProvider y useAuth
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -44,7 +44,7 @@ function AppContent() {
   };
 
   return (
-    <Router>
+    <Router> {/* CAMBIADO: Ahora es HashRouter y se ELIMINA el basename */}
       <div className="flex flex-col min-h-screen bg-gray-100 font-sans">
         <Header />
 
@@ -55,21 +55,21 @@ function AppContent() {
             <Route path="/ofertas" element={<OffersPage />} />
             <Route path="/acerca-de" element={<AboutPage />} />
             <Route path="/login" element={<LoginPage />} />
-            
+
             <Route path="/register" element={<RegisterPage />} />
-            
+
             <Route path="/register-success" element={
               <div className="text-center mt-20 text-blue-600 text-xl">
                 ¡Registro exitoso! ¡Bienvenido a AUTO HOST!
                 <p className="mt-4"><Link to="/login" className="text-blue-500 hover:underline">Inicia sesión aquí</Link></p>
               </div>
             } />
-            
+
             <Route path="/products/:id" element={<ProductDetailPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/purchase-success" element={<TicketPage />} />
             <Route path="/politica-privacidad" element={<PrivacyPolicyPage />} />
-            
+
             <Route path="/seller-dashboard" element={<SellerDashboardPage onSellerDashboard={onSellerDashboardHandler} />} />
             <Route path="/seller/add-product" element={<AddProductPage />} />
             <Route path="/seller/edit-product/:id" element={<EditProductPage />} />
@@ -85,7 +85,7 @@ function AppContent() {
             <Route path="/my-orders" element={<OrderHistoryPage />} />
 
             {/* ¡NUEVA RUTA para el Historial de Ventas del Vendedor! */}
-            <Route path="/seller/orders" element={<SellerOrdersPage />} /> {/* <-- ¡Añade esta ruta! */}
+            <Route path="/seller/orders" element={<SellerOrdersPage />} /> 
 
             <Route path="*" element={<h1 className="text-center text-3xl mt-20 text-gray-700">404: Página no encontrada</h1>} />
           </Routes>

@@ -1,47 +1,40 @@
-// Importamos la instancia de admin de nuestro firebaseAdmin.js
-const { admin } = require('../firebaseAdmin'); // <-- ¡IMPORTAMOS ADMIN AQUÍ!
+const jwt = require('jsonwebtoken'); // Necesitas tener 'jsonwebtoken' instalado (npm install jsonwebtoken)
 
-const authMiddleware = async (req, res, next) => { // <-- Hacemos la función 'async'
-  const authHeader = req.headers.authorization;
+const authMiddleware = (req, res, next) => {
+    // 1. Obtener el token del encabezado de la petición
+    // El token generalmente viene como "Bearer TOKEN_LARGO_AQUI"
+    const token = req.header('Authorization');
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Acceso denegado. No se proporcionó un token.' });
-  }
-
-  const token = authHeader.split(' ')[1]; // Obtenemos el token
-
-  try {
-    // Verificamos el token usando el SDK de Firebase Admin
-    const decodedToken = await admin.auth().verifyIdToken(token); // <-- ¡CORRECCIÓN CLAVE AQUÍ!
-    
-    // Si el token es válido, adjuntamos la información del usuario a req.user
-    req.user = { 
-      userId: decodedToken.uid, // UID del usuario de Firebase
-      email: decodedToken.email // Email del usuario
-      // Puedes añadir más campos del token decodificado si los necesitas
-    };
-
-    console.log("DEBUG: authMiddleware procesado. Token válido para usuario:", req.user.userId); // Log de éxito
-    next(); // Pasamos al siguiente middleware o a la lógica de la ruta
-  } catch (error) {
-    // Manejo de errores de verificación del token de Firebase
-    console.error("DEBUG: Error al verificar token de Firebase:", error.message); // <-- Mensaje de error detallado
-    
-    let errorMessage = 'Token no es válido.';
-    // Mensajes más específicos para el usuario si es necesario
-    switch (error.code) {
-        case 'auth/id-token-expired':
-            errorMessage = 'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.';
-            break;
-        case 'auth/argument-error': // Si el formato del token es incorrecto
-            errorMessage = 'Formato de token inválido.';
-            break;
-        // Puedes añadir más casos según los errores de Firebase Admin SDK
+    // 2. Verificar si no hay token
+    if (!token) {
+        // 401 Unauthorized: No hay token, el usuario no ha enviado credenciales
+        return res.status(401).json({ msg: 'No hay token de autenticación, autorización denegada' });
     }
 
-    res.status(401).json({ message: errorMessage });
-  }
+    // 3. Quitar la palabra "Bearer " del token
+    // (Asegurarse de que el token es lo que esperamos)
+    const tokenWithoutBearer = token.startsWith('Bearer ') ? token.slice(7) : token;
+
+    try {
+        // 4. Verificar el token
+        // Usa el JWT_SECRET que tienes configurado en tus variables de entorno (local y en Render)
+        const decoded = jwt.verify(tokenWithoutBearer, process.env.JWT_SECRET);
+
+        // 5. Adjuntar el objeto de usuario decodificado a la petición (req.user)
+        // Esto hace que la información del usuario esté disponible en las rutas protegidas
+        req.user = decoded.user; // Asumiendo que el payload de tu token tiene una propiedad 'user'
+        
+        // 6. Pasar al siguiente middleware o a la función de ruta
+        next();
+
+    } catch (err) {
+        // Manejar diferentes errores del token
+        if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({ msg: 'Token expirado' });
+        }
+        // 401 Unauthorized: Token no válido (firma incorrecta, formato incorrecto, etc.)
+        res.status(401).json({ msg: 'Token no válido, autorización denegada' });
+    }
 };
 
-// La exportación correcta y limpia.
-module.exports = { authMiddleware };
+module.exports = authMiddleware; // Exporta el middleware para usarlo en tus rutas

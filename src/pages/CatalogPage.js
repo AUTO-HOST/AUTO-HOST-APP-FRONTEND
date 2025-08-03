@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+// Importa la URL base de tu API desde el archivo de configuración centralizado
+// Asegúrate de que este archivo 'config.js' exista en tu carpeta 'src/'
+import API_BASE_URL from '../config'; 
 
 const CatalogPage = () => {
   const navigate = useNavigate();
@@ -18,9 +21,9 @@ const CatalogPage = () => {
 
   // --- ESTADOS PARA LA PAGINACIÓN ---
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(9); 
-  const [totalProducts, setTotalProducts] = useState(0); 
-  const [totalPages, setTotalPages] = useState(1); 
+  const [productsPerPage] = useState(9);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   // --- NUEVO ESTADO PARA EL ORDENAMIENTO ---
   const [sortOrder, setSortOrder] = useState('recent'); // 'recent', 'priceAsc', 'priceDesc'
@@ -39,7 +42,7 @@ const CatalogPage = () => {
     setMaxPrice('');
     setSelectedBrand('');
     setSortOrder('recent'); // Al limpiar filtros, también reseteamos el orden
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
   // Manejador para checkboxes/radio buttons y ordenamiento
@@ -77,21 +80,23 @@ const CatalogPage = () => {
       if (minPrice) queryParams.append('minPrice', minPrice);
       if (maxPrice) queryParams.append('maxPrice', maxPrice);
       if (selectedBrand) queryParams.append('brand', selectedBrand);
-      
+
       // ¡AÑADIR PARÁMETROS DE PAGINACIÓN Y ORDENAMIENTO!
       queryParams.append('page', currentPage);
       queryParams.append('limit', productsPerPage);
       queryParams.append('sort', sortOrder); // <-- ¡AÑADIDO PARÁMETRO DE ORDENAMIENTO!
 
-      const apiUrl = `http://localhost:5000/api/products?${queryParams.toString()}`;
+      // --- CAMBIO IMPORTANTE AQUÍ: Usando API_BASE_URL ---
+      const apiUrl = `${API_BASE_URL}/products?${queryParams.toString()}`;
+      // --- FIN DEL CAMBIO IMPORTANTE ---
       console.log("URL de la API con filtros, paginación y ordenamiento:", apiUrl);
-      
+
       const response = await axios.get(apiUrl);
       console.log("Respuesta completa de productos con paginación y ordenamiento:", response.data);
-      
-      setProducts(response.data.products); 
-      setTotalProducts(response.data.totalProducts); 
-      setTotalPages(Math.ceil(response.data.totalProducts / productsPerPage)); 
+
+      setProducts(response.data.products);
+      setTotalProducts(response.data.totalProducts);
+      setTotalPages(Math.ceil(response.data.totalProducts / productsPerPage));
 
       setLoading(false);
     } catch (err) {
@@ -329,16 +334,16 @@ const CatalogPage = () => {
       {/* --- Controles de Paginación --- */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center space-x-4 mt-8">
-          <button 
-            onClick={() => handlePageChange(currentPage - 1)} 
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500"
           >
             Anterior
           </button>
           <span className="text-lg font-semibold">Página {currentPage} de {totalPages}</span>
-          <button 
-            onClick={() => handlePageChange(currentPage + 1)} 
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500"
           >

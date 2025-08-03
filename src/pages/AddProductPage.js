@@ -1,8 +1,11 @@
-import React from 'react'; // Corregido: solo React
-import { useState } from 'react'; // Importamos los Hooks individualmente
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+// Importa la URL base de tu API desde un archivo de configuración centralizado
+// Asegúrate de que este archivo 'config.js' exista en tu carpeta 'src/'
+import API_BASE_URL from '../config'; 
+
 
 const AddProductPage = () => {
   const navigate = useNavigate();
@@ -61,34 +64,36 @@ const AddProductPage = () => {
     }
 
     if (!productData.name || !productData.description || !productData.price || !productData.category || !productData.condition || !productData.stock) {
-        setError("Por favor, completa todos los campos obligatorios.");
-        setLoading(false);
-        return;
+      setError("Por favor, completa todos los campos obligatorios.");
+      setLoading(false);
+      return;
     }
     if (!imageFile) {
-        setError("Por favor, sube una imagen del producto.");
-        setLoading(false);
-        return;
+      setError("Por favor, sube una imagen del producto.");
+      setLoading(false);
+      return;
     }
 
     try {
       const idToken = await currentUser.getIdToken();
-      
+
       const formDataToSend = new FormData();
-      
+
       for (const key in productData) {
         formDataToSend.append(key, productData[key]);
       }
-      
+
       formDataToSend.append('user', currentUser.uid);
       formDataToSend.append('image', imageFile);
 
-      const response = await axios.post('http://localhost:5000/api/products', formDataToSend, {
+      // --- CAMBIO IMPORTANTE AQUÍ: Usando API_BASE_URL ---
+      const response = await axios.post(`${API_BASE_URL}/products`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${idToken}`,
         },
       });
+      // --- FIN DEL CAMBIO IMPORTANTE ---
 
       console.log("Producto añadido con éxito:", response.data);
       setSuccessMessage("¡Producto publicado exitosamente!");

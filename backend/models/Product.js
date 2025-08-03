@@ -4,9 +4,9 @@ const mongoose = require('mongoose');
 const productSchema = mongoose.Schema(
   {
     user: {
-      type: String, // <-- ¡CAMBIO CLAVE AQUÍ! Ahora es un String para los UIDs de Firebase
+      type: String, // <-- ID de usuario de Firebase
       required: true,
-      ref: 'User', // Mantener ref para indicar que se relaciona con el modelo User (aunque populate no lo use directamente sin ObjectId)
+      ref: 'User', 
     },
     name: {
       type: String,
@@ -15,7 +15,7 @@ const productSchema = mongoose.Schema(
     imageUrl: {
       type: String,
     },
-    sellerEmail: { // Este campo también podría no ser necesario si siempre usas 'user' y lo buscas en Firestore/Auth
+    sellerEmail: {
       type: String,
       required: true,
     },
@@ -60,6 +60,6 @@ const productSchema = mongoose.Schema(
   }
 );
 
-const Product = mongoose.model('Product', productSchema);
+const Product = mongoose.model('Product', productSchema, 'productos'); // Colección 'productos'
 
 module.exports = Product;

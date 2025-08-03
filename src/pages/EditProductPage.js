@@ -2,6 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+// Importa la URL base de tu API desde un archivo de configuración centralizado
+// Asegúrate de que este archivo 'config.js' exista en tu carpeta 'src/' con la URL de tu backend
+import API_BASE_URL from '../config'; 
+
 
 const EditProductPage = () => {
   const { id } = useParams();
@@ -37,7 +41,9 @@ const EditProductPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+      // --- CAMBIO IMPORTANTE AQUÍ: Usando API_BASE_URL ---
+      const response = await axios.get(`${API_BASE_URL}/products/${id}`);
+      // --- FIN DEL CAMBIO IMPORTANTE ---
       const fetchedProduct = response.data;
 
       if (!currentUser || fetchedProduct.user !== currentUser.uid) {
@@ -121,9 +127,6 @@ const EditProductPage = () => {
         return;
     }
 
-    // No validamos 'imageFile' como requerido aquí, ya que puede que no se cambie la imagen
-    // La validación de 'imageFile' solo sería si es un campo requerido para la edición (no lo es)
-
     try {
       console.log("DEBUG-FRONTEND: Obteniendo ID Token."); // Log 6
       const idToken = await currentUser.getIdToken();
@@ -143,12 +146,14 @@ const EditProductPage = () => {
       }
 
       console.log("DEBUG-FRONTEND: Enviando petición PUT a backend."); // Log 10
-      const response = await axios.put(`http://localhost:5000/api/products/${id}`, formDataToSend, {
+      // --- CAMBIO IMPORTANTE AQUÍ: Usando API_BASE_URL ---
+      const response = await axios.put(`${API_BASE_URL}/products/${id}`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${idToken}`, 
         },
       });
+      // --- FIN DEL CAMBIO IMPORTANTE ---
 
       console.log("DEBUG-FRONTEND: Petición PUT enviada con éxito. Respuesta recibida:", response.data); // Log 11
       setSuccessMessage("¡Producto actualizado exitosamente!");

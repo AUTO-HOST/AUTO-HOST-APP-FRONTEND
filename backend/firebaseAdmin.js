@@ -1,36 +1,39 @@
 const admin = require('firebase-admin');
-require('dotenv').config(); // Nos aseguramos de que las variables de entorno se carguen
+require('dotenv').config();
 
-// Este código asume que tu archivo de credenciales 'serviceAccountKey.json'
-// está en la misma carpeta 'backend'.
 try {
-  const serviceAccount = require('./serviceAccountKey.json');
-
-  // --- LECTURA DE LA VARIABLE DE ENTORNO (CORREGIDO) ---
-  const storageBucket = process.env.FIREBASE_STORAGE_BUCKET;
-  if (!storageBucket) {
-    console.error('❌ ERROR: La variable de entorno FIREBASE_STORAGE_BUCKET no está definida en el archivo .env');
-    process.exit(1);
+  // --- INICIO DE CÓDIGO MODIFICADO ---
+  let serviceAccount;
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_CONFIG) {
+    try {
+      serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_CONFIG);
+    } catch (parseError) {
+      console.error('❌ ERROR: No se pudo parsear la configuración de Firebase desde la variable de entorno:', parseError.message);
+      // Puedes optar por lanzar el error o manejarlo de otra forma si la variable está mal formateada.
+      throw new Error('Configuración de Firebase JSON inválida.');
+    }
+  } else {
+    // Si no se encuentra la variable de entorno, lanzar un error
+    throw new Error('La variable de entorno FIREBASE_SERVICE_ACCOUNT_CONFIG no está definida.');
   }
+  // --- FIN DE CÓDIGO MODIFICADO ---
 
-  // --- INICIALIZACIÓN DE FIREBASE ---
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    storageBucket: storageBucket // Ahora sí usamos la variable del archivo .env
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET
   });
 
-  // Este mensaje solo aparecerá si todo lo anterior funciona.
-    console.log('✅ Firebase Admin SDK inicializado correctamente.');
-
-  // Exportamos el objeto 'admin' para que otras partes de la app puedan usarlo.
+  console.log('✅ Firebase Admin SDK inicializado correctamente.');
   module.exports = { admin };
 
 } catch (error) {
   console.error('❌ ERROR: No se pudo inicializar Firebase Admin SDK.');
-  if (error.code === 'MODULE_NOT_FOUND') {
-      console.error('Asegúrate de que el archivo "serviceAccountKey.json" exista en la carpeta "backend".');
+  // Ajustamos los mensajes de error para que sean más específicos
+  if (error.message.includes('FIREBASE_SERVICE_ACCOUNT_CONFIG no está definida')) {
+    console.error('Asegúrate de haber configurado la variable de entorno FIREBASE_SERVICE_ACCOUNT_CONFIG en Render.com.');
+  } else if (error.message.includes('JSON inválida')) {
+    console.error('Asegúrate de que el valor de la variable FIREBASE_SERVICE_ACCOUNT_CONFIG sea un JSON válido.');
   } else {
-      console.error('Error original:', error.message);
+    console.error('Error original:', error.message);
   }
-  process.exit(1);
 }

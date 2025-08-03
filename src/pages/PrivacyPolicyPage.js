@@ -1,90 +1,93 @@
 import React from 'react';
-// Ya no necesitamos useNavigate ni Link si solo se usa como modal,
-// pero los mantendré por si se usa en otro contexto.
 import { useNavigate, Link } from 'react-router-dom'; 
 
-// Este componente ahora recibirá 'isOpen' y 'onClose' como props
 function PrivacyPolicyPage({ isOpen, onClose }) { 
-  // Si el modal no está abierto, no renderizamos nada
   if (!isOpen) {
     return null;
   }
 
-  // navigate aquí no es necesario si el modal controla el cierre con onClose
-  // const navigate = useNavigate();
-
   return (
-    // Fondo oscuro semitransparente del modal
     <div 
       className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4 animate-fade-in"
-      onClick={onClose} // Permite cerrar el modal haciendo clic fuera de él
+      onClick={onClose}
     >
-      {/* Contenedor del Modal - Evita que se cierre al hacer clic dentro */}
       <div 
         className="bg-white rounded-lg shadow-2xl w-full max-w-3xl h-full md:h-5/6 flex flex-col"
-        onClick={e => e.stopPropagation()} // Detiene la propagación del clic para que no cierre el modal
+        onClick={e => e.stopPropagation()}
       >
-        {/* Encabezado del Modal con botón de cerrar */}
         <div className="p-6 border-b flex justify-between items-center">
           <h2 className="text-2xl font-bold text-gray-800">Políticas de Privacidad de AUTO-HOST</h2>
           <button type="button" onClick={onClose} className="p-1 rounded-full text-gray-500 hover:bg-gray-200">
-            {/* Icono de cerrar (X) */}
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
         </div>
 
-        {/* Cuerpo del Modal (contenido desplazable) */}
-        <div className="p-6 flex-grow overflow-y-auto"> {/* <-- overflow-y-auto para scroll */}
-          <p className="text-sm text-gray-500 mb-6">Última actualización: 10 de julio de 2025</p>
+        <div className="p-6 flex-grow overflow-y-auto">
+          <p className="text-sm text-gray-500 mb-6">Última actualización: 2 de agosto de 2025</p>
 
-          <div className="space-y-4 prose max-w-none">
+          <div className="space-y-6 prose max-w-none text-gray-700">
             <p>
-              En AUTO-HOST, valoramos tu privacidad y nos comprometemos a proteger tu información personal. Esta Política de Privacidad explica cómo recopilamos, usamos y protegemos los datos que nos proporcionas al utilizar nuestra plataforma.
+              En AUTO-HOST, valoramos profundamente tu privacidad y nos comprometemos a proteger tu información personal con la máxima diligencia. Esta Política de Privacidad describe cómo recopilamos, utilizamos, almacenamos, divulgamos y protegemos los datos que nos proporcionas al interactuar con nuestra plataforma, así como tus derechos en relación con dicha información.
             </p>
             
-            <h2 className="text-2xl font-semibold pt-4">1. Información que Recopilamos</h2>
-            <p>
-              Para operar nuestra plataforma y ofrecerte nuestros servicios, recopilamos la siguiente información:
-            </p>
-            <ul className="list-disc list-inside">
-              <li><strong>Para Compradores y Vendedores:</strong> Nombre completo, dirección de correo electrónico, y número de teléfono.</li>
-              <li><strong>Exclusivamente para Vendedores:</strong> Clave Única de Registro de Población (CURP) o Registro Federal de Contribuyentes (RFC) y CLABE interbancaria para fines de verificación de identidad y para procesar los pagos de sus ventas.</li>
-              <li><strong>Para Compradores:</strong> Dirección de envío para la entrega de los productos.</li>
+            <h3 className="text-2xl font-semibold pt-4 text-gray-800">1. Información que Recopilamos</h3>
+            <p>Para poder ofrecerte nuestros servicios de intermediación en la compra y venta de refacciones, recopilamos las siguientes categorías de información:</p>
+            <ul className="list-disc list-inside space-y-2">
+              <li><strong>Información de Contacto y Cuenta:</strong> Nombre completo, dirección de correo electrónico y número de teléfono. Estos datos son esenciales para la creación y gestión de tu cuenta en AUTO-HOST.</li>
+              <li><strong>Datos de Vendedores:</strong> Exclusivamente para usuarios registrados como Vendedores, solicitamos información de identificación fiscal como la Clave Única de Registro de Población (CURP) o el Registro Federal de Contribuyentes (RFC), y datos bancarios como la CLABE interbancaria. Estos datos son cruciales para verificar tu identidad, cumplir con obligaciones fiscales y facilitar el procesamiento de los pagos derivados de tus ventas.</li>
+              <li><strong>Datos de Compradores:</strong> Recopilamos tu dirección de envío (incluyendo calle, número, colonia, código postal y referencias) para asegurar la correcta entrega de los productos que adquieras.</li>
+              <li><strong>Información de Transacciones:</strong> Detalles sobre los productos que compras o vendes, precios, cantidades, fechas de transacción y estado de los pedidos.</li>
+              <li><strong>Comunicaciones:</strong> Contenido de los mensajes intercambiados entre compradores y vendedores a través de nuestra plataforma, con el fin de facilitar la comunicación y la resolución de disputas.</li>
+              <li><strong>Información de Uso:</strong> Datos sobre cómo interactúas con nuestra plataforma, incluyendo páginas visitadas, tiempo de permanencia, búsquedas realizadas, tipo de dispositivo y navegador. Esto nos ayuda a mejorar la funcionalidad y la experiencia de usuario.</li>
             </ul>
 
-            <h2 className="text-2xl font-semibold pt-4">2. Uso de la Información</h2>
-            <p>
-              Utilizamos tu información para los siguientes propósitos:
-            </p>
-            <ul className="list-disc list-inside">
-              <li>Crear y gestionar tu cuenta en AUTO-HOST.</li>
-              <li>Verificar la identidad de los vendedores para garantizar un mercado seguro y confiable.</li>
-              <li>Facilitar la comunicación entre compradores y vendedores.</li>
-              <li>Procesar transacciones, pagos y envíos de forma segura.</li>
-              <li>Mejorar nuestros servicios y la experiencia general del usuario en la plataforma.</li>
+            <h3 className="text-2xl font-semibold pt-4 text-gray-800">2. Uso y Finalidades de la Información</h3>
+            <p>Utilizamos la información recopilada para los siguientes propósitos:</p>
+            <ul className="list-disc list-inside space-y-2">
+              <li><strong>Gestión de Cuentas:</strong> Crear, mantener y gestionar tu perfil de usuario en AUTO-HOST.</li>
+              <li><strong>Verificación y Seguridad:</strong> Validar la identidad de los vendedores y garantizar un entorno de mercado seguro y confiable para todas las partes.</li>
+              <li><strong>Facilitar Transacciones:</strong> Procesar tus compras, ventas, pagos y coordinar los envíos de manera eficiente y segura.</li>
+              <li><strong>Comunicación:</strong> Habilitar la comunicación fluida entre compradores y vendedores para consultas y detalles de productos.</li>
+              <li><strong>Mejora de Servicios:</strong> Analizar el uso de la plataforma para mejorar nuestras funcionalidades, personalizar tu experiencia y desarrollar nuevas características.</li>
+              <li><strong>Atención al Cliente:</strong> Responder a tus consultas, solicitudes de soporte y resolver cualquier incidencia.</li>
+              <li><strong>Cumplimiento Legal:</strong> Cumplir con las leyes y regulaciones aplicables, incluyendo la prevención de fraudes y actividades ilícitas.</li>
             </ul>
 
-            <h2 className="text-2xl font-semibold pt-4">3. Seguridad de los Datos</h2>
-            <p>
-              Implementamos medidas de seguridad técnicas y organizativas robustas para proteger tus datos personales contra el acceso no autorizado, la alteración, la divulgación o la destrucción. Tu información es almacenada en servidores seguros y el acceso a ella está restringido.
-            </p>
-            
-            <h2 className="text-2xl font-semibold pt-4">4. No Compartimos tus Datos</h2>
-            <p>
-              Tu privacidad es primordial. No vendemos, alquilamos ni compartimos tu información personal con terceros para fines de marketing. La información de contacto solo se comparte entre el comprador y el vendedor en la medida estrictamente necesaria para completar una transacción (por ejemplo, para coordinar el envío).
-            </p>
+            <h3 className="text-2xl font-semibold pt-4 text-gray-800">3. Compartir y Divulgar Información</h3>
+            <p>Tu privacidad es una de nuestras principales prioridades. No vendemos, alquilamos ni comercializamos tu información personal con terceros para fines de marketing directo o cualquier otro uso no relacionado con nuestros servicios. Sin embargo, podríamos compartir tu información en las siguientes circunstancias:</p>
+            <ul className="list-disc list-inside space-y-2">
+              <li><strong>Entre Compradores y Vendedores:</strong> Para completar una transacción, la información de contacto y envío relevante se compartirá entre el comprador y el vendedor involucrados. Por ejemplo, el vendedor recibirá la dirección de envío del comprador.</li>
+              <li><strong>Proveedores de Servicios:</strong> Contratamos a terceros de confianza para que realicen servicios en nuestro nombre, como procesamiento de pagos, alojamiento de datos, servicios de envío y análisis. Estos proveedores están obligados contractualmente a proteger tu información y solo pueden usarla para los fines específicos que les encomendamos.</li>
+              <li><strong>Cumplimiento Legal:</strong> Podríamos divulgar tu información si así lo exige la ley, una orden judicial, una solicitud gubernamental o para proteger nuestros derechos, propiedad o seguridad, así como los de nuestros usuarios o el público.</li>
+              <li><strong>Transferencias de Negocio:</strong> En caso de una fusión, adquisición, venta de activos o reorganización, tu información personal podría ser transferida como parte de los activos de la empresa, siempre bajo la condición de mantener la confidencialidad.</li>
+            </ul>
 
-            <p className="pt-6 font-semibold">
-              Al utilizar los servicios de AUTO-HOST, aceptas los términos descritos en esta Política de Privacidad.
+            <h3 className="text-2xl font-semibold pt-4 text-gray-800">4. Seguridad de los Datos</h3>
+            <p>Implementamos medidas de seguridad técnicas, administrativas y físicas robustas para proteger tu información personal contra el acceso no autorizado, la alteración, la divulgación o la destrucción. Esto incluye el uso de cifrado, firewalls, controles de acceso y procedimientos de auditoría. Aunque nos esforzamos al máximo por proteger tu información, ningún sistema es completamente impenetrable, y no podemos garantizar la seguridad absoluta de tus datos transmitidos a través de internet.</p>
+
+            <h3 className="text-2xl font-semibold pt-4 text-gray-800">5. Tus Derechos</h3>
+            <p>De acuerdo con la legislación aplicable, tienes derecho a:</p>
+            <ul className="list-disc list-inside space-y-2">
+              <li><strong>Acceso:</strong> Solicitar acceso a la información personal que tenemos sobre ti.</li>
+              <li><strong>Rectificación:</strong> Solicitar la corrección de datos personales inexactos o incompletos.</li>
+              <li><strong>Cancelación:</strong> Solicitar la eliminación de tu información personal cuando ya no sea necesaria para los fines para los que fue recopilada.</li>
+              <li><strong>Oposición:</strong> Oponerte al uso de tus datos personales para ciertos fines.</li>
+            </ul>
+            <p>Para ejercer cualquiera de estos derechos, por favor contáctanos a través de [tu_email_de_soporte@ejemplo.com].</p>
+
+            <h3 className="text-2xl font-semibold pt-4 text-gray-800">6. Cambios a esta Política de Privacidad</h3>
+            <p>Podemos actualizar esta Política de Privacidad periódicamente para reflejar cambios en nuestras prácticas de datos o en la legislación aplicable. Te notificaremos sobre cualquier cambio significativo publicando la nueva política en nuestra plataforma y actualizando la fecha de "Última actualización" en la parte superior.</p>
+
+            <p className="pt-6 font-semibold text-gray-800">
+              Al utilizar los servicios de AUTO-HOST, confirmas que has leído y comprendido esta Política de Privacidad, y que aceptas sus términos.
             </p>
           </div>
           
           <p className="mt-8 text-xs text-gray-500">
-            <strong>Nota legal:</strong> Este es un borrador de política de privacidad con fines de desarrollo. Se recomienda encarecidamente que consultes a un profesional legal para redactar una política final que asegure el cumplimiento total con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares de México antes del lanzamiento oficial de tu plataforma.
+            <strong>Nota legal importante:</strong> Este es un borrador de política de privacidad con fines de desarrollo y demostración. **Se recomienda encarecidamente que consultes a un profesional legal especializado en privacidad y protección de datos** para redactar una política final que asegure el cumplimiento total con la Ley Federal de Protección de Datos Personales en Posesión de los Particulares de México (LFPDPPP) y otras regulaciones relevantes antes del lanzamiento oficial de tu plataforma. AUTO-HOST no se hace responsable de la idoneidad legal de este texto.
           </p>
         </div>
 
-        {/* Pie del Modal (opcional, para botones de cerrar o aceptar) */}
         <div className="bg-gray-50 px-6 py-4 flex justify-end">
           <button 
             type="button" 

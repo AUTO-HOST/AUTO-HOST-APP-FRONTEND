@@ -1,36 +1,45 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors'); // Importa cors
-require('dotenv').config();
+const cors = require('cors');
+require('dotenv').config(); // Carga variables de entorno
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Configuración de CORS: Permite todas las solicitudes de cualquier origen
-// y maneja las solicitudes OPTIONS (preflight)
+// Configuración de CORS
 app.use(cors({
-  origin: '*', // Permite cualquier origen. Para producción, cambiar a tu dominio específico
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos permitidos
-  allowedHeaders: ['Content-Type', 'Authorization'], // Encabezados permitidos
-  preflightContinue: false, // No pasa a otros middlewares antes de la respuesta preflight
-  optionsSuccessStatus: 204 // Código de estado para respuestas OPTIONS exitosas
+  origin: '*', // Permite cualquier origen. En Render, Render asigna la URL de tu frontend.
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
-// Middleware para manejar el cuerpo de las solicitudes JSON y URL-encoded
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Conexión a MongoDB
 const MONGO_URI = process.env.MONGO_URI;
 if (!MONGO_URI) {
-  console.error('❌ ERROR: La variable de entorno MONGO_URI no está definida en el archivo .env');
-  process.exit(1);
+  console.error('❌ ERROR: La variable de entorno MONGO_URI no está definida.');
+} else {
+  mongoose.connect(MONGO_URI)
+    .then(() => console.log('✅ MongoDB conectado exitosamente.'))
+    .catch(err => {
+      console.error('❌ ERROR al conectar con MongoDB:', err.message);
+    });
 }
 
-mongoose.connect(MONGO_URI)
-  .then(() => console.log('✅ MongoDB conectado exitosamente'))
-  .catch(err => {
-    console.error('❌ ERROR al conectar con MongoDB:', err.message);
-    process.exit(1);
-  });
+// Importar e inicializar Firebase Admin SDK (para Storage y Auth)
+// serviceAccountKey.json debe estar en la misma carpeta 'backend/'
+const adminInit = require('./firebaseAdmin');
+if (!adminInit || !adminInit.admin) {
+    console.error('❌ ERROR: Firebase Admin SDK no se inicializó correctamente en server.js');
+} else {
+    console.log('✅ Firebase Admin SDK disponible en server.js');
+}
 
+// Cargar rutas
 try {
   console.log("🔄 Cargando rutas...");
 
@@ -45,15 +54,16 @@ try {
   const messageRoutes = require('./routes/messageRoutes');
   app.use('/api/messages', messageRoutes);
   console.log("✅ Rutas de mensajes (/api/messages) cargadas.");
-  
+
   console.log("🎉 Todas las rutas se cargaron exitosamente.");
 
 } catch (error) {
     console.error('❌ ERROR FATAL AL CARGAR RUTAS:', error.message);
-    process.exit(1);
 }
 
-const PORT = process.env.PORT || 5000;
+// El servidor empieza a escuchar en el puerto que Render le asigne
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor backend arrancado en el puerto ${PORT}`);
+    console.log(`🚀 Servidor backend arrancado en el puerto ${PORT}`);
 });
+
+module.exports = app;

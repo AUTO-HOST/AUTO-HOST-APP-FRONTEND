@@ -24,7 +24,7 @@ const ConversationDetailModal = ({ isOpen, onClose, productId, otherUserId, prod
 
     try {
       const idToken = await currentUser.getIdToken();
-      const response = await axios.get(`http://localhost:5000/api/messages/${productId}/${otherUserId}`, {
+      const response = await axios.get(`https://us-central1-blissful-land-465502-f0.cloudfunctions.net/api/api/messages/${productId}/${otherUserId}`, {
         headers: {
           'Authorization': `Bearer ${idToken}`,
         },
@@ -57,7 +57,7 @@ const ConversationDetailModal = ({ isOpen, onClose, productId, otherUserId, prod
 
     try {
       const idToken = await currentUser.getIdToken();
-      const response = await axios.post('http://localhost:5000/api/messages/reply', {
+      const response = await axios.post('https://us-central1-blissful-land-465502-f0.cloudfunctions.net/api/api/messages/reply', {
         receiverId: otherUserId,
         productId,
         productName,
