@@ -22,6 +22,12 @@ const ProductDetailPage = () => {
   const [error, setError] = useState(null);
   const [showContactModal, setShowContactModal] = useState(false);
 
+  // --- FUNCIÓN AÑADIDA/CORREGIDA: handleCloseContactModal ---
+  const handleCloseContactModal = () => {
+    setShowContactModal(false);
+  };
+  // --- FIN DE FUNCIÓN AÑADIDA/CORREGIDA ---
+
   const fetchProductDetails = useCallback(async () => {
     setLoading(true);
     setError(null);
