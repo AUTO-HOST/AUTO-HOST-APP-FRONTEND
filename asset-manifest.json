@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/AUTO-HOST-APP-FRONTEND/static/css/main.797f67fb.css",
-    "main.js": "/AUTO-HOST-APP-FRONTEND/static/js/main.7082f8df.js",
+    "main.js": "/AUTO-HOST-APP-FRONTEND/static/js/main.a582a7b0.js",
     "static/media/logo_AUTOHOST.png": "/AUTO-HOST-APP-FRONTEND/static/media/logo_AUTOHOST.a535d3ba47a59bf01baf.png",
     "index.html": "/AUTO-HOST-APP-FRONTEND/index.html",
     "main.797f67fb.css.map": "/AUTO-HOST-APP-FRONTEND/static/css/main.797f67fb.css.map",
-    "main.7082f8df.js.map": "/AUTO-HOST-APP-FRONTEND/static/js/main.7082f8df.js.map"
+    "main.a582a7b0.js.map": "/AUTO-HOST-APP-FRONTEND/static/js/main.a582a7b0.js.map"
   },
   "entrypoints": [
     "static/css/main.797f67fb.css",
-    "static/js/main.7082f8df.js"
+    "static/js/main.a582a7b0.js"
   ]
 }
