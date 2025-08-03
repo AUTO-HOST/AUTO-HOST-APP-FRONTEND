@@ -1,6 +1,3 @@
 // src/config.js
-// Esta es la URL base de tu backend desplegado en Render.com
-// Asegúrate de que sea la URL exacta de tu último servicio
-const API_BASE_URL = 'https://auto-host-backend-ULTIMA.onrender.com/api'; 
-
+const API_BASE_URL = 'https://auto-host-backend-ultima.onrender.com/api'; // <--- ¡Esta es la URL correcta!9
 export default API_BASE_URL;
