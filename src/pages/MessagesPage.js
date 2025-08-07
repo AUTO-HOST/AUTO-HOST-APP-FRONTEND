@@ -53,7 +53,7 @@ const MessagesPage = () => {
 
     return (
         <div className="container mx-auto p-8 my-8 bg-white rounded-lg shadow-lg">
-            <h2 className="text-3xl font-bold text-center mb-8">Mis Mensajes</h2>
+            <h2 className="text-3xl font-bold text-blue-800 text-center mb-8">Mis Mensajes</h2>
             {conversations.length === 0 ? (
                 <p className="text-center text-gray-600">No tienes conversaciones aún.</p>
             ) : (
