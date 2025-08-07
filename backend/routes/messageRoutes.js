@@ -1,21 +1,31 @@
-// backend/routes/messageRoutes.js
 const express = require('express');
 const router = express.Router();
-const Message = require('../models/Message'); // Importa el modelo de mensaje
-const Conversation = require('../models/Conversation'); // Importa el modelo de conversación
-const authMiddleware = require('../middleware/authMiddleware'); // Importa el middleware de autenticación
-const { admin } = require('../firebaseAdmin'); // Para Firebase Admin SDK y Firestore
+const authMiddleware = require('../middleware/authMiddleware');
+const { admin } = require('../firebaseAdmin');
+const Product = require('../models/Product'); // Asegúrate que la ruta a tu modelo es correcta
 
-const db = admin.firestore(); // Inicializa Firestore
+const db = admin.firestore();
 
-// --- RUTA: ENVIAR MENSAJE (POST /api/messages/send) ---
+// --- RUTA: ENVIAR MENSAJE (VERSIÓN CORREGIDA Y MÁS SEGURA) ---
 router.post('/send', authMiddleware, async (req, res) => {
     try {
-        const { receiverId, productId, productName, content, receiverEmail } = req.body;
-        const senderId = req.user.uid;
-        const senderEmail = req.user.email; // Email del usuario autenticado
+        // Ya no necesitamos que el frontend nos envíe el receiverId
+        const { productId, productName, content } = req.body;
+        const senderId = req.user.userId; // CORREGIDO
+        const senderEmail = req.user.email;
 
-        // Buscar/crear conversación en Firestore
+        // --- NUEVA LÓGICA ---
+        // 1. Buscar el producto para encontrar al vendedor
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ message: "Producto no encontrado." });
+        }
+        // Obtenemos el ID del vendedor directamente desde el producto
+        const receiverId = product.user.toString();
+        // --- FIN DE LA NUEVA LÓGICA ---
+
+        // El resto del código para buscar o crear la conversación
         let conversationQuery = await db.collection('conversations')
             .where('productId', '==', productId)
             .where('participants', 'array-contains', senderId)
@@ -23,7 +33,6 @@ router.post('/send', authMiddleware, async (req, res) => {
 
         let conversationDoc;
         if (!conversationQuery.empty) {
-            // Filtrar para encontrar la conversación que también contenga a receiverId
             conversationDoc = conversationQuery.docs.find(doc => doc.data().participants.includes(receiverId));
         }
 
@@ -34,19 +43,18 @@ router.post('/send', authMiddleware, async (req, res) => {
                 productId: productId,
                 productName: productName,
                 participants: [senderId, receiverId],
+                participantEmails: [senderEmail, product.sellerEmail], // Asumiendo que tienes sellerEmail en tu producto
                 lastMessageAt: admin.firestore.FieldValue.serverTimestamp(),
             });
-            console.log("Nueva conversación creada:", conversationRef.id);
         } else {
+            // Usar conversación existente
             conversationRef = db.collection('conversations').doc(conversationDoc.id);
-            // Actualizar timestamp de última actividad
             await conversationRef.update({
                 lastMessageAt: admin.firestore.FieldValue.serverTimestamp()
             });
-            console.log("Conversación existente actualizada:", conversationRef.id);
         }
 
-        // Crear el nuevo mensaje en una subcolección 'messages'
+        // Añadir el nuevo mensaje a la subcolección
         const messagesSubcollectionRef = conversationRef.collection('messages');
         const newMessageRef = await messagesSubcollectionRef.add({
             senderId: senderId,
@@ -54,7 +62,6 @@ router.post('/send', authMiddleware, async (req, res) => {
             content: content,
             timestamp: admin.firestore.FieldValue.serverTimestamp()
         });
-        console.log("Nuevo mensaje añadido:", newMessageRef.id);
 
         res.status(201).json({ message: 'Mensaje enviado', messageId: newMessageRef.id });
 
@@ -64,10 +71,14 @@ router.post('/send', authMiddleware, async (req, res) => {
     }
 });
 
-// --- RUTA: OBTENER CONVERSACIONES DEL USUARIO (GET /api/messages/conversations) ---
+// --- RUTA: OBTENER CONVERSACIONES DEL USUARIO ---
 router.get('/conversations', authMiddleware, async (req, res) => {
     try {
-        const userId = req.user.uid;
+        const userId = req.user.userId; // CORREGIDO
+
+        if (!userId) {
+            return res.status(400).json({ message: 'No se pudo verificar la identidad del usuario.' });
+        }
 
         const conversationsSnapshot = await db.collection('conversations')
             .where('participants', 'array-contains', userId)
@@ -84,13 +95,12 @@ router.get('/conversations', authMiddleware, async (req, res) => {
     }
 });
 
-// --- RUTA: OBTENER MENSAJES DE UNA CONVERSACIÓN ESPECÍFICA (GET /api/messages/:productId/:otherUserId) ---
+// --- RUTA: OBTENER MENSAJES DE UNA CONVERSACIÓN ESPECÍFICA ---
 router.get('/:productId/:otherUserId', authMiddleware, async (req, res) => {
     try {
         const { productId, otherUserId } = req.params;
-        const userId = req.user.uid; // Usuario autenticado
+        const userId = req.user.userId; // CORREGIDO
 
-        // Encontrar la conversación en Firestore
         let conversationQuery = await db.collection('conversations')
             .where('productId', '==', productId)
             .where('participants', 'array-contains', userId)
@@ -105,11 +115,10 @@ router.get('/:productId/:otherUserId', authMiddleware, async (req, res) => {
             return res.status(404).json({ message: 'Conversación no encontrada.' });
         }
 
-        // Obtener los mensajes de la subcolección 'messages'
         const messagesSnapshot = await db.collection('conversations')
             .doc(conversationDoc.id)
             .collection('messages')
-            .orderBy('timestamp', 'asc') // Ordenar por timestamp
+            .orderBy('timestamp', 'asc')
             .get();
 
         const messages = messagesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
