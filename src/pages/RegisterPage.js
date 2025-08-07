@@ -14,7 +14,7 @@ const RegisterPage = () => {
   const [showPrivacyModal, setShowPrivacyModal] = useState(false); // Nuevo estado para el modal de PP
 
   // --- Estados para todos los datos del formulario ---
-  // ¡TODAS LAS DECLARACIONES DE ESTADO Y FUNCIONES DEBEN IR   AQUÍ ARRIBA DEL RETURN!
+  // ¡TODAS LAS DECLARACIONES DE ESTADO Y FUNCIONES DEBEN IR-AQUÍ ARRIBA DEL RETURN!
   const [formData, setFormData] = useState({
     userType: 'Vendedor',
     email: '',
