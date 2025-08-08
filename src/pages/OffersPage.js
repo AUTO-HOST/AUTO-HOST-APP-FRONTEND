@@ -58,7 +58,7 @@ const OffersPage = () => {
                     {products.map((product) => (
                         // CORRECCIÓN: Comprobamos si el producto individual y sus precios existen
                         product && product.originalPrice != null && product.price != null && (
-                            <div key={product._id} className="bg-white p-4 rounded-lg shadow-md flex flex-col items-center text-center">
+                              <div key={product._id} className="relative bg-white p-4 rounded-lg shadow-md flex flex-col items-center text-center">
                                 <span className="absolute top-2 left-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full z-10">¡OFERTA!</span>
                                 {product.discountPercentage &&
                                     <span className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full z-10">{product.discountPercentage}% OFF</span>
