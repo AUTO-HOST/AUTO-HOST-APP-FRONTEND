@@ -61,15 +61,22 @@ const ProductDetailPage = () => {
         const itemPrice = calculateDisplayPrice();
         const userId = currentUser.uid;
         const cartRef = doc(db, "carts", userId);
+
+        // CORRECCIÓN: La variable se llama cartItemRef
         const cartItemRef = doc(collection(cartRef, "items"), product._id);
+
         try {
-            const itemInCartSnap = await getDoc(itemInCartRef);
+            // CORRECCIÓN: Usar cartItemRef en lugar de itemInCartRef
+            const itemInCartSnap = await getDoc(cartItemRef);
+
             if (itemInCartSnap.exists()) {
-                await updateDoc(itemInCartRef, { quantity: increment(1), totalPrice: increment(itemPrice) });
+                // CORRECCIÓN: Usar cartItemRef en lugar de itemInCartRef
+                await updateDoc(cartItemRef, { quantity: increment(1), totalPrice: increment(itemPrice) });
                 showInfoModal('Carrito Actualizado', `¡Se añadió otra unidad de "${product.name}" al carrito!`);
             } else {
                 await setDoc(cartRef, { userId: userId }, { merge: true });
-                await setDoc(itemInCartRef, {
+                // CORRECCIÓN: Usar cartItemRef en lugar de itemInCartRef
+                await setDoc(cartItemRef, {
                     productId: product._id,
                     name: product.name,
                     imageUrl: product.imageUrl,
@@ -129,7 +136,6 @@ const ProductDetailPage = () => {
                 Volver
             </button>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Columna de Imagen */}
                 <div className="md:col-span-1">
                     <img
                         src={product.imageUrl}
@@ -137,7 +143,6 @@ const ProductDetailPage = () => {
                         className="product-detail-image"
                     />
                 </div>
-                {/* Columna de Detalles del Producto */}
                 <div className="md:col-span-1 flex flex-col justify-between">
                     <div>
                         <h1 className="text-4xl font-bold text-blue-800 mb-4">{product.name}</h1>
@@ -166,7 +171,6 @@ const ProductDetailPage = () => {
                             <p className="text-gray-700">Email: {product.sellerEmail || 'No disponible'}</p>
                         </div>
                     </div>
-                    {/* Botones de Acción */}
                     <div className="flex flex-col sm:flex-row gap-4 mt-6">
                         {product.stock > 0 ? (
                             <button
@@ -189,7 +193,6 @@ const ProductDetailPage = () => {
                     </div>
                 </div>
             </div>
-            {/* Modal de Contacto con el Vendedor */}
             {showContactModal && (
                 <ContactSellerModal
                     isOpen={showContactModal}
